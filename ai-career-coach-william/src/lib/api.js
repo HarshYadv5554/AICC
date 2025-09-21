@@ -32,6 +32,8 @@ export const auth = {
     register: (data) => api.post('/api/auth/register', data),
     login: (data) => api.post('/api/auth/login', data),
     me: () => api.get('/api/auth/me'),
+    google: () => window.location.href = `${API_BASE_URL}/api/auth/google`,
+    linkedin: () => window.location.href = `${API_BASE_URL}/api/auth/linkedin`,
 };
 
 export const profile = {

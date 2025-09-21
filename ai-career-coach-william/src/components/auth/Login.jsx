@@ -81,11 +81,17 @@ const Login = () => {
 
         {/* Social/Guest Sign-in Options */}
         <div className="space-y-4">
-          <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-900 bg-gray-100 hover:bg-gray-200 hover:scale-105 hover:shadow-lg transition-all duration-200 active:scale-95">
+          <button 
+            onClick={() => auth.google()}
+            className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-900 bg-gray-100 hover:bg-gray-200 hover:scale-105 hover:shadow-lg transition-all duration-200 active:scale-95"
+          >
             <FaGoogle className="mr-2" />
             Sign In with Google
           </button>
-          <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-900 bg-gray-100 hover:bg-gray-200 hover:scale-105 hover:shadow-lg transition-all duration-200 active:scale-95">
+          <button 
+            onClick={() => auth.linkedin()}
+            className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-900 bg-gray-100 hover:bg-gray-200 hover:scale-105 hover:shadow-lg transition-all duration-200 active:scale-95"
+          >
             <FaLinkedinIn className="mr-2" />
             Sign In with LinkedIn
           </button>

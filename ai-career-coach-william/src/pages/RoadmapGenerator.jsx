@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom';
 const RoadmapGenerator = () => {
   const location = useLocation();
   const presetRole = location.state?.targetRole;
-  const [selectedCareer, setSelectedCareer] = useState('');
+  const [customRole, setCustomRole] = useState('');
   const [currentLevel, setCurrentLevel] = useState('');
   const [timeCommitment, setTimeCommitment] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -17,35 +17,9 @@ const RoadmapGenerator = () => {
 
   useEffect(() => {
     if (presetRole) {
-      const id = roleNameToId(presetRole);
-      if (id) setSelectedCareer(id);
+      setCustomRole(presetRole);
     }
   }, [presetRole]);
-
-  function roleNameToId(name) {
-    const map = {
-      'AI Engineer': 'ai-engineer',
-      'Data Analyst': 'data-analyst',
-      'Frontend Developer': 'frontend-dev',
-      'Backend Developer': 'backend-dev',
-      'Full Stack Developer': 'fullstack-dev',
-      'Data Scientist': 'data-scientist',
-      'DevOps Engineer': 'devops-engineer',
-      'UX Designer': 'ux-designer',
-    };
-    return map[name] || '';
-  }
-
-  const careerPaths = [
-    { id: 'ai-engineer', name: 'AI Engineer', description: 'Build intelligent systems and machine learning models' },
-    { id: 'data-analyst', name: 'Data Analyst', description: 'Analyze data to drive business insights' },
-    { id: 'frontend-dev', name: 'Frontend Developer', description: 'Create user interfaces and experiences' },
-    { id: 'backend-dev', name: 'Backend Developer', description: 'Build server-side applications and APIs' },
-    { id: 'fullstack-dev', name: 'Full Stack Developer', description: 'End-to-end web application development' },
-    { id: 'data-scientist', name: 'Data Scientist', description: 'Extract insights from complex datasets' },
-    { id: 'devops-engineer', name: 'DevOps Engineer', description: 'Automate deployment and infrastructure' },
-    { id: 'ux-designer', name: 'UX Designer', description: 'Design user-centered digital experiences' }
-  ];
 
   const skillLevels = [
     { id: 'beginner', name: 'Beginner', description: 'New to this field' },
@@ -60,20 +34,20 @@ const RoadmapGenerator = () => {
   ];
 
   useEffect(() => {
-    // Auto-generate if we have a preset role and user picks a level/time quickly
-    if (selectedCareer && currentLevel && timeCommitment && !generatedRoadmap && !isGenerating) {
+    // Auto-generate if we have a custom role and user picks a level/time quickly
+    if (customRole && currentLevel && timeCommitment && !generatedRoadmap && !isGenerating) {
       handleGenerateRoadmap();
     }
-  }, [selectedCareer, currentLevel, timeCommitment]);
+  }, [customRole, currentLevel, timeCommitment]);
 
   const handleGenerateRoadmap = async () => {
-    if (!selectedCareer || !currentLevel || !timeCommitment) return;
+    if (!customRole || !currentLevel || !timeCommitment) return;
     setIsGenerating(true);
     setError('');
     try {
-      const res = await ai.roadmap({ targetRole: careerPaths.find(c => c.id === selectedCareer)?.name || selectedCareer, currentLevel });
+      const res = await ai.roadmap({ targetRole: customRole, currentLevel });
       setGeneratedRoadmap(res.data.roadmap?.milestones ? {
-        title: careerPaths.find(cp => cp.id === selectedCareer)?.name,
+        title: customRole,
         duration: '12 weeks',
         phases: (res.data.roadmap.milestones || []).map((m, idx) => ({ id: idx + 1, title: m.title, duration: '1-2 weeks', status: idx === 0 ? 'current' : 'next', skills: (m.resources || []).map(r => ({ name: r.title || 'Resource', completed: false, hours: 5 })) }))
       } : null);
@@ -85,7 +59,7 @@ const RoadmapGenerator = () => {
   };
 
   const handleResetRoadmap = () => {
-    setSelectedCareer('');
+    setCustomRole('');
     setCurrentLevel('');
     setTimeCommitment('');
     setGeneratedRoadmap(null);
@@ -155,19 +129,22 @@ const RoadmapGenerator = () => {
 
           {!generatedRoadmap && (
             <>
-              {/* Career Path Selection */}
+              {/* Custom Role Input */}
               <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 mb-8">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-2">
                   <MdOutlineStars className="text-indigo-400" size={24} />
-                  <span>Select Your Target Career</span>
+                  <span>Enter Your Target Career</span>
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {careerPaths.map((career) => (
-                    <div key={career.id} onClick={() => setSelectedCareer(career.id)} className={`p-4 rounded-lg border cursor-pointer transition-all duration-200 ${selectedCareer === career.id ? 'border-indigo-400 bg-indigo-500/10' : 'border-gray-300 hover:border-gray-500'}`}>
-                      <h3 className="font-semibold text-gray-900 mb-2">{career.name}</h3>
-                      <p className="text-sm text-gray-600">{career.description}</p>
-                    </div>
-                  ))}
+                <div className="max-w-2xl">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Career Role</label>
+                  <input 
+                    type="text"
+                    value={customRole}
+                    onChange={(e) => setCustomRole(e.target.value)}
+                    placeholder="e.g. AI Engineer, Data Scientist, Product Manager, etc."
+                    className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                  />
+                  <p className="text-sm text-gray-600 mt-2">Enter any career role you want to pursue</p>
                 </div>
               </div>
 
@@ -205,7 +182,7 @@ const RoadmapGenerator = () => {
 
               {/* Generate Button */}
               <div className="text:center">
-                <button onClick={handleGenerateRoadmap} disabled={!selectedCareer || !currentLevel || !timeCommitment || isGenerating} className="bg-indigo-500 text-gray-900 px-8 py-4 rounded-full font-semibold text-lg hover:bg-indigo-600 disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors duration-300">
+                <button onClick={handleGenerateRoadmap} disabled={!customRole || !currentLevel || !timeCommitment || isGenerating} className="bg-indigo-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-indigo-600 disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors duration-300">
                   {isGenerating ? 'Generating Your Roadmap...' : 'Generate Personalized Roadmap'}
                 </button>
                 {error && <div className="text-sm text-red-600 mt-2">{error}</div>}

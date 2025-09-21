@@ -3,6 +3,7 @@ import RootLayout from "../layout/RootLayout";
 import AuthLayout from "../layout/AuthLayout";
 import Register from "../components/auth/Register";
 import Login from "../components/auth/Login";
+import OAuthCallback from "../pages/OAuthCallback";
 import Dashboard from "../pages/Dashboard"
 import TestPage from "../pages/TestPage"
 import SimpleDashboard from "../pages/SimpleDashboard"
@@ -35,6 +36,11 @@ const router = createBrowserRouter([
         Component: Login
       },
     ],
+  },
+  {
+    path: "/auth/callback",
+    Component: OAuthCallback,
+    errorElement: <ErrorPage/>
   },
   {
     path: "/",

@@ -41,7 +41,7 @@ const Header = () => {
       </div>
 
       {/* Desktop navigation and buttons (visible on md screens and up) */}
-      <div className="hidden md:flex items-center space-x-6">
+      <div className="hidden md:flex items-center justify-end flex-1 -mr-24">
         {/* Additional links can go here */}
         {!isAuth ? (
           <>

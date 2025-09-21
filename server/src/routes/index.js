@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import authRoutes from './auth.routes.js';
+import oauthRoutes from './oauth.routes.js';
 import profileRoutes from './profile.routes.js';
 import progressRoutes from './progress.routes.js';
 import aiRoutes from './ai.routes.js';
@@ -13,6 +14,7 @@ router.get('/', (req, res) => {
 });
 
 router.use('/auth', authRoutes);
+router.use('/auth', oauthRoutes);
 router.use('/profile', profileRoutes);
 router.use('/progress', progressRoutes);
 router.use('/ai', aiRoutes);
